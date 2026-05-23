@@ -11,12 +11,11 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://health-le6v6w1ec-sufyans-projects-d0e763b2.vercel.app" // change later
+    "https://health-app-git-master-sufyans-projects-d0e763b2.vercel.app"
   ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
-app.options("*", cors());
 
 app.use(express.json());
 
