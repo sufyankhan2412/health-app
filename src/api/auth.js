@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const BASE = "https://health-app-vi7z.onrender.com";
 
 const post = async (url, body, token) => {
   const headers = { "Content-Type": "application/json" };
