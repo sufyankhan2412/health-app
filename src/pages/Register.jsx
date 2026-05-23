@@ -99,24 +99,35 @@ export default function Register() {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      await registerUser({
-        fullName: form.fullName,
-        email: form.email,
-        password: form.password,
-        phone: countryCode + form.phone,
-      });
-      sessionStorage.setItem("pendingEmail", form.email);
-      navigate("/otp");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+
+  console.log("🔥 SUBMIT FIRED"); // ADD THIS
+
+  setError("");
+  setLoading(true);
+
+  try {
+    console.log("🚀 CALLING API"); // ADD THIS
+
+    const res = await registerUser({
+      fullName: form.fullName,
+      email: form.email,
+      password: form.password,
+      phone: countryCode + form.phone,
+    });
+
+    console.log("✅ RESPONSE:", res);
+
+    sessionStorage.setItem("pendingEmail", form.email);
+    navigate("/otp");
+
+  } catch (err) {
+    console.log("❌ ERROR:", err.message);
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="reg-wrapper">
