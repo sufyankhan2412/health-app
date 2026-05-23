@@ -13,7 +13,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/api/(.*)", "destination": "/api/index.cjs" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

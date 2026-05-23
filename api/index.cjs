@@ -1,6 +1,5 @@
 const app = require("../backend/server.js");
 
-// Handle OPTIONS preflight
 module.exports = (req, res) => {
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", "*");
