@@ -12,18 +12,15 @@ const allowedOrigins = [
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
-app.use(
-  cors({
-    origin: (origin, cb) => {
-      if (!origin) return cb(null, true);
-      if (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
-        return cb(null, true);
-      }
-      cb(new Error(`CORS blocked: ${origin}`));
-    },
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: "*",  // tighten this after testing
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false  // must be false when origin is "*"
+}));
+
+// Handle preflight
+app.options("*", cors());
 
 app.use(express.json());
 
