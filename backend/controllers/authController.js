@@ -42,10 +42,17 @@ const register = async (req, res) => {
     }
 
     console.log("📧 Sending OTP email...");
-    await sendOtp(email, otp);
-    console.log("✅ OTP sent successfully");
+    
+    // Send email without blocking the response
+    sendOtp(email, otp)
+      .then(() => console.log("✅ OTP sent successfully to", email))
+      .catch(err => console.error("⚠️ Email send failed:", err.message, "- OTP:", otp));
 
-    return res.status(201).json({ message: "OTP sent to your email. Please verify." });
+    return res.status(201).json({ 
+      message: "OTP sent to your email. Please verify.",
+      // In development, include OTP for testing (remove in production)
+      ...(process.env.NODE_ENV !== "production" && { otp })
+    });
   } catch (err) {
     console.error("💥 Register error:", err);
     return res.status(500).json({ message: "Server error.", error: err.message });
