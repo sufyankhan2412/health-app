@@ -28,7 +28,17 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+/* ---------------- Request Logging ---------------- */
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`, {
+    origin: req.headers.origin,
+    contentType: req.headers['content-type']
+  });
+  next();
+});
 
 /* ---------------- MongoDB ---------------- */
 mongoose.connect(process.env.MONGO_URI)
@@ -40,6 +50,14 @@ app.use("/api", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running");
+});
+
+app.get("/health", (req, res) => {
+  res.json({ 
+    status: "ok", 
+    timestamp: new Date().toISOString(),
+    mongodb: mongoose.connection.readyState === 1 ? "connected" : "disconnected"
+  });
 });
 
 /* ---------------- Error Handling ---------------- */

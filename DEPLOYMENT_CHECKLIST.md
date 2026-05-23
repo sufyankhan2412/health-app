@@ -14,6 +14,7 @@
 - Updated to accept all Vercel preview URLs using regex pattern
 - Added credentials support
 - Better error handling for CORS issues
+- **OPTIONS preflight now returns 204 ✅**
 
 ### 4. ✅ API Client Fix
 - Fixed duplicate headers in POST request
@@ -21,6 +22,27 @@
 
 ### 5. ✅ Error Handling
 - Added global error handler middleware to backend
+- Added detailed logging in register controller
+- Added request logging middleware
+
+### 6. ✅ Body Parser
+- Increased body size limit to 10mb
+- Added urlencoded parser for form data
+
+### 7. ✅ Health Check
+- Added `/health` endpoint to verify backend status
+- Shows MongoDB connection status
+
+---
+
+## Quick Test:
+
+1. **Test Health Endpoint:**
+   Open: https://health-app-vi7z.onrender.com/health
+   Should return: `{"status":"ok","timestamp":"...","mongodb":"connected"}`
+
+2. **Test with HTML File:**
+   Open `test-api.html` in your browser to test both endpoints
 
 ---
 

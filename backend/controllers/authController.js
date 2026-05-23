@@ -9,13 +9,21 @@ const generateOtp = () => crypto.randomInt(100000, 999999).toString();
 // ── POST /api/patient/register ──────────────────────────────────────────────
 const register = async (req, res) => {
   try {
+    console.log("📝 Register request received:", { 
+      body: req.body, 
+      hasEmail: !!req.body.email,
+      hasPassword: !!req.body.password 
+    });
+
     const { email, fullName, password, phone } = req.body;
     if (!email || !fullName || !password || !phone) {
+      console.log("❌ Missing fields");
       return res.status(400).json({ message: "All fields are required." });
     }
 
     const existing = await User.findOne({ email });
     if (existing && existing.isVerified) {
+      console.log("❌ Email already exists");
       return res.status(409).json({ message: "Email already registered. Please log in." });
     }
 
@@ -24,19 +32,23 @@ const register = async (req, res) => {
 
     if (existing) {
       // Re-send OTP for unverified account
+      console.log("♻️ Resending OTP to existing unverified user");
       existing.otp = otp;
       existing.otpExpiry = otpExpiry;
       await existing.save();
     } else {
+      console.log("✨ Creating new user");
       await User.create({ fullName, email, password, phone, otp, otpExpiry });
     }
 
+    console.log("📧 Sending OTP email...");
     await sendOtp(email, otp);
+    console.log("✅ OTP sent successfully");
 
     return res.status(201).json({ message: "OTP sent to your email. Please verify." });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error." });
+    console.error("💥 Register error:", err);
+    return res.status(500).json({ message: "Server error.", error: err.message });
   }
 };
 

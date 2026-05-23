@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+    button { padding: 10px 20px; margin: 10px 5px; cursor: pointer; }
+    .success { color: green; }
+    .error { color: red; }
+    pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+    input { padding: 8px; margin: 5px; width: 300px; }
+  </style>
+</head>
+<body>
+  <h1>Health App API Tester</h1>
+  
+  <div>
+    <h3>1. Test Health Endpoint</h3>
+    <button onclick="testHealth()">Test /health</button>
+    <div id="health-result"></div>
+  </div>
+
+  <div>
+    <h3>2. Test Registration</h3>
+    <input type="text" id="fullName" placeholder="Full Name" value="Test User"><br>
+    <input type="email" id="email" placeholder="Email" value="test@example.com"><br>
+    <input type="tel" id="phone" placeholder="Phone" value="+911234567890"><br>
+    <input type="password" id="password" placeholder="Password" value="test123"><br>
+    <button onclick="testRegister()">Test Registration</button>
+    <div id="register-result"></div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://health-app-vi7z.onrender.com';
+
+    async function testHealth() {
+      const resultDiv = document.getElementById('health-result');
+      resultDiv.innerHTML = '<p>Testing...</p>';
+      
+      try {
+        const response = await fetch(`${API_BASE}/health`);
+        const data = await response.json();
+        
+        resultDiv.innerHTML = `
+          <p class="success">✅ Success!</p>
+          <pre>${JSON.stringify(data, null, 2)}</pre>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <p class="error">❌ Error: ${error.message}</p>
+        `;
+      }
+    }
+
+    async function testRegister() {
+      const resultDiv = document.getElementById('register-result');
+      resultDiv.innerHTML = '<p>Testing...</p>';
+      
+      const payload = {
+        fullName: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        password: document.getElementById('password').value
+      };
+
+      console.log('Sending:', payload);
+      
+      try {
+        const response = await fetch(`${API_BASE}/api/patient/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          resultDiv.innerHTML = `
+            <p class="success">✅ Success! Status: ${response.status}</p>
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+          `;
+        } else {
+          resultDiv.innerHTML = `
+            <p class="error">❌ Error! Status: ${response.status}</p>
+            <pre>${JSON.stringify(data, null, 2)}</pre>
+          `;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <p class="error">❌ Network Error: ${error.message}</p>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
