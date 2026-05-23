@@ -5,19 +5,16 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/auth");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// CORS — allow local dev + any Vercel deployment
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  process.env.CLIENT_URL, // set this in production .env
+  process.env.CLIENT_URL,
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, cb) => {
-      // allow requests with no origin (mobile apps, curl, Postman)
       if (!origin) return cb(null, true);
       if (allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
         return cb(null, true);
@@ -30,19 +27,20 @@ app.use(
 
 app.use(express.json());
 
+// Connect to MongoDB (no .then() blocking the export)
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Atlas connected"))
+  .catch((err) => console.error("MongoDB connection error:", err.message));
+
 // Routes
 app.use("/api", authRoutes);
 app.get("/health", (_, res) => res.json({ status: "ok" }));
 
-// Connect to MongoDB Atlas then start server
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB Atlas connected");
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err.message);
-    process.exit(1);
-  });
-module.exports = app;
+// Local dev only
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+module.exports = app; // ← Vercel needs this
