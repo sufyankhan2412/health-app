@@ -4,13 +4,11 @@ const post = async (url, body, token) => {
   const headers = { "Content-Type": "application/json" };
   if (token) headers["Authorization"] = `Bearer ${token}`;
   const res = await fetch(`${BASE}${url}`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(body),
-  mode: "cors"
-});
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+    mode: "cors"
+  });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "Something went wrong.");
   return data;
