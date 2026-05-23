@@ -22,10 +22,10 @@ const get = async (url, token) => {
   return data;
 };
 
-export const registerUser  = (payload)        => post("/patient/register", payload);
-export const verifyEmail   = (email, otp)      => post("/user/verifyEmail", { email, otp });
-export const loginUser     = (email, password) => post("/user/login", { email, password });
-export const getMe         = (token)           => get("/user/me", token);
+export const registerUser  = (payload)         => post("/api/patient/register", payload);
+export const verifyEmail   = (email, otp)       => post("/api/user/verifyEmail", { email, otp });
+export const loginUser     = (email, password)  => post("/api/user/login", { email, password });
+export const getMe         = (token)            => get("/api/user/me", token);
 
 export const saveToken   = (token) => localStorage.setItem("happ_token", token);
 export const getToken    = ()      => localStorage.getItem("happ_token");
