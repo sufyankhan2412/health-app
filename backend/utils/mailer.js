@@ -1,24 +1,42 @@
 const nodemailer = require("nodemailer");
 
-const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST,
-  port: Number(process.env.MAIL_PORT),
-  secure: false,
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-  connectionTimeout: 10000, // 10 seconds
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-});
+// Create transporter based on environment
+const createTransporter = () => {
+  // If using SendGrid
+  if (process.env.MAIL_HOST === 'smtp.sendgrid.net') {
+    return nodemailer.createTransport({
+      host: 'smtp.sendgrid.net',
+      port: 587,
+      auth: {
+        user: 'apikey',
+        pass: process.env.MAIL_PASS,
+      },
+    });
+  }
+  
+  // Default Gmail/SMTP configuration
+  return nodemailer.createTransport({
+    host: process.env.MAIL_HOST,
+    port: Number(process.env.MAIL_PORT),
+    secure: false,
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
+  });
+};
+
+const transporter = createTransporter();
 
 const sendOtp = async (to, otp) => {
   try {
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: process.env.MAIL_FROM,
       to,
       subject: "Your ExpatCares Verification Code",
@@ -31,9 +49,10 @@ const sendOtp = async (to, otp) => {
         </div>
       `,
     });
+    console.log("📧 Email sent:", info.messageId);
     return true;
   } catch (error) {
-    console.error("Email sending failed:", error.message);
+    console.error("📧 Email sending failed:", error.message);
     throw error;
   }
 };

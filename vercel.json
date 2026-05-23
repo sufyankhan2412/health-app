@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://health-app-vi7z.onrender.com/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
